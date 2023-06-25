@@ -34,6 +34,27 @@ body {
   border-radius: 4px;
 }
 
+#midline-input {
+  /* Adjust color for midline input */
+  background-color: #fff;
+  color: #333;
+}
+
+#ica-input {
+  /* Adjust color for ICA input */
+  background-color: #fff;
+  color: #333;
+}
+
+#mi-ratio-output,
+#cure-rate-ratio-output,
+#class-classification-output,
+#cure-rate-output {
+  /* Adjust color for bottom text boxes */
+  background-color: #ddd;
+  color: #888;
+}
+
 .calculate-button {
   display: block;
   margin: 20px auto;
@@ -60,12 +81,6 @@ body {
 .result-container label {
   font-weight: bold;
   margin-right: 10px;
-}
-
-.chart-container {
-  position: relative;
-  text-align: center;
-  margin: 0 auto;
 }
 
 
@@ -114,7 +129,35 @@ body {
   background-color: #fff;
   border-radius: 4px;
   margin: 0 auto;
-  width: 600px;
-  height: 400px;
+  max-width: 400px;
+  height: 300px;
 }
+
+
+.disabled-input {
+  background-color: #ddd;
+  color: #888;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.chart-container {
+  position: relative;
+  text-align: center;
+  display: inline-block;
+  margin: 20px 10px; /* Adjust the margin to control spacing */
+  width: 300px;
+  height: 200px;
+}
+
+.line-chart-container {
+background-color: #fff;
+  position: relative;
+  text-align: center;
+  display: inline-block;
+  vertical-align: top;
+  width: 300px; /* Adjust the width as needed */
+  height: 150px; /* Adjust the height as needed */
+  margin:20px 10px; /* Adjust the margin-top value as needed */
+}
+
 

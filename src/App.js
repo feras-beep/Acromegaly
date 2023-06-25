@@ -1,21 +1,43 @@
-import "./App.css";
-import React, { useEffect, useRef } from "react";
-import Chart from "chart.js/auto";
+import React, { useRef, useEffect } from 'react';
+import './App.css';
+
+import 'chartjs-adapter-moment';
+
+import {
+  Chart,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarController,
+  BarElement,
+  LineController,
+  ScatterController,
+  ScatterDataPoint
+
+} from 'chart.js';
+
+Chart.register(CategoryScale, LinearScale, PointElement, LineElement, BarController, BarElement, LineController);
 
 const App = () => {
   const chartContainer = useRef(null);
+  const lineChartContainer = useRef(null);
   const chartInstance = useRef(null);
 
   useEffect(() => {
+    Chart.defaults.font.family = "'Roboto', sans-serif";
+    Chart.defaults.font.weight = 'normal';
+    Chart.defaults.font.size = 12;
+
     chartInstance.current = new Chart(chartContainer.current, {
-      type: "bar",
+      type: 'bar',
       data: {
-        labels: ["Class 1", "Class 2", "Class 3"],
+        labels: ['Class 1', 'Class 2', 'Class 3'],
         datasets: [
           {
-            label: "Predicted Cure Rate",
+            label: 'Cure Rate (%)',
             data: [68, 38, 0],
-            backgroundColor: ["#8bc34a", "#ffc107", "#ff0000"],
+            backgroundColor: ['#8bc34a', '#ffc107', 'rgba(255, 0, 0, 0.8)'],
           },
         ],
       },
@@ -26,19 +48,7 @@ const App = () => {
             max: 100,
             title: {
               display: true,
-              text: "Cure Rate (%)",
-            },
-            grid: {
-              drawBorder: false,
-              color: ["#dcdcdc"],
-            },
-            ticks: {
-              color: "#666",
-            },
-          },
-          x: {
-            grid: {
-              display: false,
+              text: 'Cure Rate (%)',
             },
           },
         },
@@ -47,125 +57,162 @@ const App = () => {
             display: false,
           },
         },
-        layout: {
-          padding: {
-            top: 40,
+      },
+    });
+
+    const lineGraphData = [];
+    for (let i = 0; i <= 15; i++) {
+      const miRatio = i * 0.1;
+      const cureRateRatio = 0.93 + miRatio * -0.49;
+      lineGraphData.push({ x: miRatio, y: cureRateRatio });
+    }
+
+    new Chart(lineChartContainer.current, {
+      type: 'line',
+      data: {
+        datasets: [
+          {
+            label: 'Cure Rate Ratio',
+            data: lineGraphData,
+            borderColor: 'rgba(0, 0, 255, 1)',
+            backgroundColor: 'rgba(0, 0, 255, 0.2)',
           },
-        },
-        interaction: {
-          intersect: false,
-        },
-        elements: {
-          bar: {
-            borderWidth: 1,
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            type: 'linear',
+            min: 0,
+            max: 1.5,
+            title: {
+              display: true,
+              text: 'M/I Ratio',
+            },
           },
-          line: {
-            borderWidth: 2,
-            borderColor: "#ff0000",
+          y: {
+            min: 0,
+            max: 1,
+            title: {
+              display: true,
+              text: 'Cure Rate Ratio',
+            },
           },
         },
       },
     });
+    
   }, []);
 
-  const getClassification = (miRatio) => {
-    if (miRatio < 0.58) {
-      return "Class 1";
-    } else if (miRatio < 1) {
-      return "Class 2";
-    } else {
-      return "Class 3";
-    }
-  };
-
-  const getCureRate = (classification) => {
-    if (classification === "Class 1") {
-      return 68;
-    } else if (classification === "Class 2") {
-      return 38;
-    } else if (classification === "Class 3") {
-      return 0;
-    } else {
-      return 0;
-    }
-  };
-
   const calculate = () => {
-    const midlineInput = document.getElementById("midline-input");
-    const icaInput = document.getElementById("ica-input");
-    const cureRateInput = document.getElementById("cure-rate-input");
-    const miInput = document.getElementById("mi-input");
-    const classInput = document.getElementById("class-input");
-
+    const midlineInput = document.getElementById('midline-input');
+    const icaInput = document.getElementById('ica-input');
+    const miRatioOutput = document.getElementById('mi-ratio-output');
+    const cureRateRatioOutput = document.getElementById('cure-rate-ratio-output');
+    const classClassificationOutput = document.getElementById('class-classification-output');
+    const cureRateOutput = document.getElementById('cure-rate-output');
+  
     const midline = parseFloat(midlineInput.value);
     const icaDistance = parseFloat(icaInput.value);
-
+  
     // Calculate the M/I Ratio
     const miRatio = midline / icaDistance;
-
-    const classification = getClassification(miRatio);
-    const cureRate = getCureRate(classification);
-    cureRateInput.value = `${cureRate}%`;
-    miInput.value = miRatio.toFixed(2);
-    classInput.value = classification;
-
-    // Update chart data for cure rates
-    const classLabels = ["Class 1", "Class 2", "Class 3"];
-    const cureRates = classLabels.map((label) => {
-      const classCureRate = getCureRate(label);
-      return classification === label ? classCureRate : NaN;
-    });
-
-    chartInstance.current.data.labels = classLabels;
+  
+    // Update the M/I Ratio textbox
+    miRatioOutput.value = miRatio.toFixed(2);
+  
+    // Calculate the Cure Rate by Ratio
+    const cureRateRatio = (0.93 + (miRatio * -0.49));
+  
+    // Ensure the Cure Rate is not below 0
+    const cureRate = cureRateRatio < 0 ? 0 : cureRateRatio;
+  
+    // Update the Cure Rate Ratio textbox
+    cureRateRatioOutput.value = cureRate.toFixed(2)*100;
+  
+    // Classify the M/I Ratio into a Class
+    let classClassification;
+    if (miRatio <= 0.58) {
+      classClassification = 'Class 1'
+      cureRateOutput.value = 68;
+    } else if (miRatio < 1) {
+      cureRateOutput.value = 38;
+      classClassification = 'Class 2';
+    } else {
+      cureRateOutput.value = 0;
+      classClassification = 'Class 3';
+    }
+  
+    // Update the Class Classification textbox
+    classClassificationOutput.value = classClassification;
+  
+    // Update the Cure Rate textbox
+    
+  
+    // Update chart data for cure rates by class
+    const cureRates = [68, 38, 0];
     chartInstance.current.data.datasets[0].data = cureRates;
-
+  
+    chartInstance.current.update();
+  
+    // Add data point to line chart
+    const lineGraphData = [
+      { x: miRatio, y: cureRate },
+      { x: miRatio, y: 0 },
+    ];
+  
+    chartInstance.current.data.datasets.push({
+      data: lineGraphData,
+      type: 'scatter',
+      showLine: false,
+      pointBackgroundColor: 'red',
+      pointBorderColor: 'red',
+      pointRadius: 5,
+    });
+  
     chartInstance.current.update();
   };
+  
 
   return (
-    <div>
-      <h1 className="title">Acromegaly Classification</h1>
+    <div className="container">
+      <h1 className="title">Cure Rate Analysis</h1>
       <div className="input-container">
-        <label htmlFor="midline-input">Midline:</label>
+        <label htmlFor="midline-input">Midline Measured:</label>
         <input type="number" id="midline-input" />
       </div>
       <div className="input-container">
-        <label htmlFor="ica-input">ICA Distance:</label>
+        <label htmlFor="ica-input">ICA Diameter:</label>
         <input type="number" id="ica-input" />
+      </div>
+      <div className="input-container">
+        <label htmlFor="mi-ratio-output">M/I Ratio:</label>
+        <input type="text" id="mi-ratio-output" readOnly />
+      </div>
+      <div className="input-container">
+        <label htmlFor="cure-rate-ratio-output">Cure Rate Ratio:</label>
+        <input type="text" id="cure-rate-ratio-output" readOnly />
+      </div>
+      <div className="input-container">
+        <label htmlFor="class-classification-output">Class Classification:</label>
+        <input type="text" id="class-classification-output" readOnly />
+      </div>
+      <div className="input-container">
+        <label htmlFor="cure-rate-output">Cure Rate:</label>
+        <input type="text" id="cure-rate-output" readOnly />
       </div>
       <button className="calculate-button" onClick={calculate}>
         Calculate
       </button>
-      <div className="result-container">
-        <label htmlFor="cure-rate-input">Predicted Cure Rate:</label>
-        <input type="text" id="cure-rate-input" readOnly />
-      </div>
-      <div className="result-container">
-        <label htmlFor="mi-input">M/I Ratio:</label>
-        <input type="text" id="mi-input" readOnly />
-      </div>
-      <div className="result-container">
-        <label htmlFor="class-input">Class:</label>
-        <input type="text" id="class-input" readOnly />
-      </div>
       <div className="chart-container">
-        <canvas ref={chartContainer} />
-        <div className="chart-key">
-          <span className="key-item">
-            <span className="key-class1"></span>Class 1
-          </span>
-          <span className="key-item">
-            <span className="key-class2"></span>Class 2
-          </span>
-          <span className="key-item">
-            <span className="key-class3"></span>Class 3
-          </span>
-        </div>
+        <canvas ref={chartContainer}></canvas>
+      </div>
+      <div className="line-chart-container">
+        <canvas ref={lineChartContainer}></canvas>
       </div>
     </div>
   );
 };
 
 export default App;
-
 

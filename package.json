@@ -1,13 +1,14 @@
 {
   "name": "acromegaly",
   "homepage": "https://feras-beep.github.io/acromegaly",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "chart.js": "^4.3.0",
+    "chartjs-adapter-moment": "^1.0.1",
     "git": "^0.1.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -39,5 +40,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^5.0.0"
   }
 }

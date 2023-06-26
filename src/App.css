@@ -107,23 +107,24 @@ body {
 .key-class1 {
   width: 16px;
   height: 16px;
-  background-color: #8bc34a;
+  background-color: #ff0000; /* Change the background color to red */
   border: 1px solid #000;
 }
 
 .key-class2 {
   width: 16px;
   height: 16px;
-  background-color: #ffc107;
+  background-color: #00ff00; /* Change the background color to green */
   border: 1px solid #000;
 }
 
 .key-class3 {
   width: 16px;
   height: 16px;
-  background-color: #ff0000;
+  background-color: #0000ff; /* Change the background color to blue */
   border: 1px solid #000;
 }
+
 
 .chart-container canvas {
   background-color: #fff;
@@ -145,8 +146,8 @@ body {
   text-align: center;
   display: inline-block;
   margin: 20px 10px; /* Adjust the margin to control spacing */
-  width: 300px;
-  height: 200px;
+  width: 400px;
+  height: 300px;
 }
 
 .line-chart-container {
@@ -155,8 +156,8 @@ background-color: #fff;
   text-align: center;
   display: inline-block;
   vertical-align: top;
-  width: 300px; /* Adjust the width as needed */
-  height: 150px; /* Adjust the height as needed */
+  width: 350px; /* Adjust the width as needed */
+  height: 200px; /* Adjust the height as needed */
   margin:20px 10px; /* Adjust the margin-top value as needed */
 }
 

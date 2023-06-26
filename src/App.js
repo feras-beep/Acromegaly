@@ -12,17 +12,26 @@ import {
   BarController,
   BarElement,
   LineController,
-  ScatterController,
-  ScatterDataPoint
-
+  Tooltip,
 } from 'chart.js';
 
-Chart.register(CategoryScale, LinearScale, PointElement, LineElement, BarController, BarElement, LineController);
+Chart.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarController,
+  BarElement,
+  LineController,
+  Tooltip
+);
+
 
 const App = () => {
   const chartContainer = useRef(null);
   const lineChartContainer = useRef(null);
   const chartInstance = useRef(null);
+  const chartLineInstance = useRef(null);
 
   useEffect(() => {
     Chart.defaults.font.family = "'Roboto', sans-serif";
@@ -56,23 +65,32 @@ const App = () => {
           legend: {
             display: false,
           },
+          title: {
+            display: true,
+            text: 'Cure Rates by Class',
+            position: 'top',
+            font: {
+              size: 16,
+              weight: 'bold',
+            },
+          },
         },
       },
     });
 
     const lineGraphData = [];
-    for (let i = 0; i <= 15; i++) {
-      const miRatio = i * 0.1;
+    for (let i = 0; i <= 40; i++) {
+      const miRatio = i * 0.05;
       const cureRateRatio = 0.93 + miRatio * -0.49;
       lineGraphData.push({ x: miRatio, y: cureRateRatio });
     }
 
-    new Chart(lineChartContainer.current, {
+    chartLineInstance.current = new Chart(lineChartContainer.current, {
       type: 'line',
       data: {
         datasets: [
           {
-            label: 'Cure Rate Ratio',
+            label: 'Cure Rate ratio',
             data: lineGraphData,
             borderColor: 'rgba(0, 0, 255, 1)',
             backgroundColor: 'rgba(0, 0, 255, 0.2)',
@@ -84,7 +102,7 @@ const App = () => {
           x: {
             type: 'linear',
             min: 0,
-            max: 1.5,
+            max: 2.0,
             title: {
               display: true,
               text: 'M/I Ratio',
@@ -95,13 +113,35 @@ const App = () => {
             max: 1,
             title: {
               display: true,
-              text: 'Cure Rate Ratio',
+              text: 'Cure Rate (%)',
+            },
+          },
+        },
+        plugins: {
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              label: (context) => {
+                const label = context.dataset.label || '';
+                if (label) {
+                  return `${label}: ${context.formattedValue}`;
+                }
+                return context.formattedValue;
+              },
+            },
+          },
+          title: {
+            display: true,
+            text: 'Cure Rates by Ratio',
+            position: 'top',
+            font: {
+              size: 16,
+              weight: 'bold',
             },
           },
         },
       },
     });
-    
   }, []);
 
   const calculate = () => {
@@ -111,68 +151,74 @@ const App = () => {
     const cureRateRatioOutput = document.getElementById('cure-rate-ratio-output');
     const classClassificationOutput = document.getElementById('class-classification-output');
     const cureRateOutput = document.getElementById('cure-rate-output');
-  
+
     const midline = parseFloat(midlineInput.value);
     const icaDistance = parseFloat(icaInput.value);
-  
+
     // Calculate the M/I Ratio
     const miRatio = midline / icaDistance;
-  
+
     // Update the M/I Ratio textbox
     miRatioOutput.value = miRatio.toFixed(2);
-  
+
     // Calculate the Cure Rate by Ratio
-    const cureRateRatio = (0.93 + (miRatio * -0.49));
-  
+    const cureRateRatio = 0.93 + miRatio * -0.49;
+
     // Ensure the Cure Rate is not below 0
     const cureRate = cureRateRatio < 0 ? 0 : cureRateRatio;
-  
+
     // Update the Cure Rate Ratio textbox
-    cureRateRatioOutput.value = cureRate.toFixed(2)*100;
-  
+    cureRateRatioOutput.value = cureRate.toFixed(2);
+
     // Classify the M/I Ratio into a Class
     let classClassification;
     if (miRatio <= 0.58) {
-      classClassification = 'Class 1'
-      cureRateOutput.value = 68;
+      classClassification = 'Class 1';
     } else if (miRatio < 1) {
-      cureRateOutput.value = 38;
       classClassification = 'Class 2';
     } else {
-      cureRateOutput.value = 0;
       classClassification = 'Class 3';
     }
-  
+
     // Update the Class Classification textbox
     classClassificationOutput.value = classClassification;
-  
-    // Update the Cure Rate textbox
-    
-  
-    // Update chart data for cure rates by class
+
+    // Update the Cure Rate textbox with cure rate by class
     const cureRates = [68, 38, 0];
+    let cureRateByClass;
+    if (classClassification === 'Class 1') {
+      cureRateByClass = cureRates[0];
+    } else if (classClassification === 'Class 2') {
+      cureRateByClass = cureRates[1];
+    } else {
+      cureRateByClass = cureRates[2];
+    }
+    cureRateOutput.value = cureRateByClass.toFixed(2);
+
+    
     chartInstance.current.data.datasets[0].data = cureRates;
-  
-    chartInstance.current.update();
-  
+    chartInstance.current.update(); // Update the bar chart
+
     // Add data point to line chart
-    const lineGraphData = [
-      { x: miRatio, y: cureRate },
-      { x: miRatio, y: 0 },
-    ];
+    const lineGraphData = {
+      x: miRatio,
+      y: cureRate,
+      borderColor: 'rgba(255, 0, 0, 1)', // Change the border color to red
+      backgroundColor: 'rgba(255, 0, 0, 1)', // Change the fill color to red
+      pointStyle: 'cross',
+      pointRadius: 10,
+      borderWidth: 3,
+    };
   
-    chartInstance.current.data.datasets.push({
-      data: lineGraphData,
-      type: 'scatter',
-      showLine: false,
-      pointBackgroundColor: 'red',
-      pointBorderColor: 'red',
-      pointRadius: 5,
-    });
+    // Remove the oldest data point if the dataset exceeds a certain length
+    const lineData = chartLineInstance.current.data.datasets[0].data;
+    if (lineData.length >= 50) {
+      lineData.shift();
+    }
   
-    chartInstance.current.update();
+    lineData.push(lineGraphData);
+    chartLineInstance.current.update();
   };
-  
 
   return (
     <div className="container">
@@ -215,4 +261,3 @@ const App = () => {
 };
 
 export default App;
-

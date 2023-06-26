@@ -92,8 +92,8 @@ const App = () => {
           {
             label: 'Cure Rate ratio',
             data: lineGraphData,
-            borderColor: 'rgba(0, 0, 255, 1)',
-            backgroundColor: 'rgba(0, 0, 255, 0.2)',
+            borderColor: 'rgba(255, 0, 0, 1)',
+            backgroundColor: 'rgba(255, 0, 0, 0.2)',
           },
         ],
       },
@@ -203,8 +203,8 @@ const App = () => {
     const lineGraphData = {
       x: miRatio,
       y: cureRate,
-      borderColor: 'rgba(255, 0, 0, 1)', // Change the border color to red
-      backgroundColor: 'rgba(255, 0, 0, 1)', // Change the fill color to red
+      borderColor: 'rgba(0, 0, 255, 1)', // Change the border color to red
+      backgroundColor: 'rgba(0, 0, 255, 1)', // Change the fill color to red
       pointStyle: 'cross',
       pointRadius: 10,
       borderWidth: 3,

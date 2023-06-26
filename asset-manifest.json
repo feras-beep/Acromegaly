@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/acromegaly/static/css/main.2d17b396.css",
-    "main.js": "/acromegaly/static/js/main.5f737f79.js",
+    "main.css": "/acromegaly/static/css/main.127fea6f.css",
+    "main.js": "/acromegaly/static/js/main.e3880ffa.js",
     "index.html": "/acromegaly/index.html",
-    "main.2d17b396.css.map": "/acromegaly/static/css/main.2d17b396.css.map",
-    "main.5f737f79.js.map": "/acromegaly/static/js/main.5f737f79.js.map"
+    "main.127fea6f.css.map": "/acromegaly/static/css/main.127fea6f.css.map",
+    "main.e3880ffa.js.map": "/acromegaly/static/js/main.e3880ffa.js.map"
   },
   "entrypoints": [
-    "static/css/main.2d17b396.css",
-    "static/js/main.5f737f79.js"
+    "static/css/main.127fea6f.css",
+    "static/js/main.e3880ffa.js"
   ]
 }

@@ -127,7 +127,7 @@ body {
 
 
 .chart-container canvas {
-  background-color: #fff;
+  background-color: #827e7e;
   border-radius: 4px;
   margin: 0 auto;
   max-width: 400px;
@@ -142,6 +142,7 @@ body {
   cursor: not-allowed;
 }
 .chart-container {
+  background-color: #827e7e;
   position: relative;
   text-align: center;
   display: inline-block;
@@ -151,7 +152,7 @@ body {
 }
 
 .line-chart-container {
-background-color: #fff;
+background-color: #827e7e;
   position: relative;
   text-align: center;
   display: inline-block;

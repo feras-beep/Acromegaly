@@ -1,6 +1,5 @@
 {
   "name": "acromegaly",
-  "homepage": "https://feras-beep.github.io/acromegaly",
   "version": "0.1.1",
   "private": true,
   "dependencies": {
